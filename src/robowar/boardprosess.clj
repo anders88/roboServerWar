@@ -21,8 +21,24 @@
   (is (= [0 1] (pos-after-move [1 1] :north)))
 )
 
+
 (with-test
   (defn move [tank]
     (assoc tank :pos (pos-after-move (tank :pos) (tank :facing))))
   (is (= {:pos [0 1] :facing :east} (move {:pos [0 0] :facing :east})))
   )
+
+(with-test
+  (defn rotate-right [tank]
+     (assoc tank :facing ({:north :east, :east :south, :south :west, :west :north} (tank :facing))))
+  (is (= {:pos [1 1] :facing :east} (rotate-right {:pos [1 1] :facing :north})))
+  (is (= {:pos [1 1] :facing :north} (rotate-right {:pos [1 1] :facing :west})))
+  )
+
+(with-test
+  (defn rotate-left [tank]
+     (assoc tank :facing ({:north :west, :east :north, :south :east, :west :south} (tank :facing))))
+  (is (= {:pos [1 1] :facing :west} (rotate-left {:pos [1 1] :facing :north})))
+  (is (= {:pos [1 1] :facing :south} (rotate-left {:pos [1 1] :facing :west})))
+  )
+
