@@ -42,3 +42,24 @@
   (is (= {:pos [1 1] :facing :south} (rotate-left {:pos [1 1] :facing :west})))
   )
 
+(with-test
+  (defn sees-it? [origin direction target] 
+    (let [testop ({:north [> =] :south [< =] :east [= <] :west [= >]} direction)]
+    (and ((first testop) (first origin) (first target)) 
+         ((second testop) (second origin) (second target)))
+    ))
+  (is (sees-it? [1 1] :east [1 8]))
+  (is (sees-it? [1 1] :north [0 1]))
+  (is (not (sees-it? [1 1] :north [1 2])))
+  )
+
+(with-test 
+  (defn look [origin tanks]
+    (let [to-map (fn [maprep] (zipmap (map #(first %) maprep) (map #(second %) maprep)))]
+    (to-map (filter #(sees-it? (origin :pos) (origin :facing) ((second %) :pos)) tanks))
+  ))
+  (is (= (look {:pos [1 1] :facing :west} {"One" {:pos [1 1] :facing :west}}) {}))
+  (is (= (look {:pos [1 1] :facing :east} 
+    {"Two" {:pos [1 8] :facing :east}}) {"Two" {:pos [1 8] :facing :east}}))
+  )
+
